@@ -10,7 +10,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 display = 1
 num_classes = 5
 batch_size = 30
-iterations = 4000
+iterations = 3000
+iterations_for_accuracy = 20
 base_lr = 0.001
 momentum = 0.9
 cpu_num = 12
@@ -47,8 +48,8 @@ def train():
 	lr_weight = tf.train.exponential_decay(base_lr, global_step, 1000, 0.1,staircase=True)  
 	lr_bias = tf.train.exponential_decay(base_lr * 2, global_step, 1000, 0.1,staircase=True)
 
-	opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum)
-	opt_bias = tf.train.MomentumOptimizer(lr_bias, momentum=momentum)
+	opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum,name = 'momentum2')
+	opt_bias = tf.train.MomentumOptimizer(lr_bias, momentum=momentum,name = 'momentum2')
 
 	softmax_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = y_pred,labels = y_target))
 
@@ -68,13 +69,15 @@ def train():
 	saver = tf.train.Saver()
 	merged = tf.summary.merge_all()
 
-	rgb_list = 'list/rgb_5.list'
+	out_final = tf.nn.softmax(y_pred)
+	correct_pred = tf.equal(tf.argmax(out_final,axis = 1),tf.argmax(y_target,axis = 1))
+	accuracy_tensor = tf.reduce_mean(tf.cast(correct_pred,"float"))
 
+	rgb_list = 'list/rgb_5.list'
 	init = tf.global_variables_initializer()
 	sess.run(init)
-
 	train_writer = tf.summary.FileWriter('./visual_logs/train_full_class_pred', sess.graph)
-
+	total_accuracy = 0
     for i in range(1,iterations+1):
         start_time = time.time()
 
@@ -90,13 +93,13 @@ def train():
         duration = time.time() - start_time
         print('read data time %.3f sec' % (duration))
 
-		feature, summary, loss_value, ce_loss, _, old_weight = sess.run([
-		    reshaped, merged, loss, softmax_loss, train_op, grad_weight], feed_dict={
+		feature, summary, loss_value, ce_loss, _, old_weight,accuracy= sess.run([
+		    reshaped, merged, loss, softmax_loss, train_op, grad_weight,accuracy_tensor], feed_dict={
 		    img_input: train_images,
 		    y_target: train_labels,
 		    temp: temp_value
 		})
-
+		total_accuracy = total_accuracy+accuracy
         if i % (display) == 0:
             print("softmax_loss:", ce_loss)
             print("loss:", loss_value)
@@ -105,8 +108,21 @@ def train():
         print('Step %d: %.3f sec' % (i, duration))
 
 
-        if i % 1000 == 0:
+        if i % 200 == 0:
+
+        	print("Avg accuracy from step %d to %d: %.3f" % (i-200,i,total_accuracy/200))
+        	total_accuracy = 0
+
+        	final_accuracy = 0
+        	for i in range(iterations_for_accuracy):
+		        test_images,test_labels,_ = new_input_data.read_all(rgb_filename = rgb_list,batch_size = batch_size,num_classes = num_classes,start_pos = -1,shuffle = True,cpu_num = cpu_num)
+		        label_pred,label,accuracy = sess.run([y_pred,out_final,accuracy_tensor],feed_dict = {img_input:test_images,y_target:test_labels,temp:temp_value})
+		        final_accuracy = final_accuracy+accuracy
+
+        	print("Accuracy at step %d: %.3f" % (i,final_accuracy/iterations_for_accuracy))
+
             saver.save(sess, os.path.join("full_class_pred_model", model_name), global_step=global_step)
+
 
 def main(_):
     train()

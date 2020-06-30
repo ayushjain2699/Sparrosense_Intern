@@ -10,7 +10,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 display = 1
 num_classes = 5
 batch_size = 30
-iterations = 4000
+iterations = 3000
 iterations_for_accuracy = 20
 base_lr = 0.001
 momentum = 0.9
@@ -40,16 +40,16 @@ def train():
 	varlist_bias = []
 	trainable_variables = tf.trainable_variables()
 	for var in trainable_variables:
-	    if 'train_weight' in var.name:
+	    if 'weight' in var.name:
 	        varlist_weight.append(var)
-	    elif 'train_bias' in var.name:
+	    elif 'bias' in var.name:
 	        varlist_bias.append(var)
 
 	lr_weight = tf.train.exponential_decay(base_lr, global_step, 1000, 0.1,staircase=True)  
 	lr_bias = tf.train.exponential_decay(base_lr * 2, global_step, 1000, 0.1,staircase=True)
 
-	opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum)
-	opt_bias = tf.train.MomentumOptimizer(lr_bias, momentum=momentum)
+	opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum,name = "momentum2")
+	opt_bias = tf.train.MomentumOptimizer(lr_bias, momentum=momentum,name = "momentum2")
 
 	softmax_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = y_pred,labels = y_target))
 
