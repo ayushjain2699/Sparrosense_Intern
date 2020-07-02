@@ -123,7 +123,7 @@ def train():
         	total_accuracy = 0
 
         	final_accuracy = 0
-        	for i in range(iterations_for_accuracy):
+        	for j in range(iterations_for_accuracy):
 		        test_images,test_labels,_ = new_input_data.read_all(rgb_filename = rgb_list,batch_size = batch_size,num_classes = num_classes,start_pos = -1,shuffle = True,cpu_num = cpu_num)
 		        label_pred,label,accuracy = sess.run([y_pred,out_final,accuracy_tensor],feed_dict = {img_input:test_images,y_target:test_labels,temp:temp_value})
 		        final_accuracy = final_accuracy+accuracy

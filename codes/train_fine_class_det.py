@@ -15,7 +15,7 @@ iterations_for_accuracy = 20
 base_lr = 0.001
 momentum = 0.9
 cpu_num = 12
-model_name = "class_pred.ckpt"
+model_name = "fina_class_pred.ckpt"
 
 def train():
 
@@ -85,7 +85,7 @@ def train():
 
 	initialize_uninitialized(sess)
 
-	train_writer = tf.summary.FileWriter('./visual_logs/train_class_pred', sess.graph)
+	train_writer = tf.summary.FileWriter('./visual_logs/train_fine_class_pred', sess.graph)
 	total_accuracy = 0
 
     for i in range(1,iterations+1):
@@ -123,14 +123,14 @@ def train():
         	total_accuracy = 0
 
         	final_accuracy = 0
-        	for i in range(iterations_for_accuracy):
+        	for j in range(iterations_for_accuracy):
 		        test_images,test_labels,_ = new_input_data.read_all(rgb_filename = rgb_list,batch_size = batch_size,num_classes = num_classes,start_pos = -1,shuffle = True,cpu_num = cpu_num)
 		        label_pred,label,accuracy = sess.run([y_pred,out_final,accuracy_tensor],feed_dict = {img_input:test_images,y_target:test_labels,temp:temp_value})
 		        final_accuracy = final_accuracy+accuracy
 
         	print("Accuracy at step %d: %.3f" % (i,final_accuracy/iterations_for_accuracy))
 
-            saver.save(sess, os.path.join("class_pred_model", model_name), global_step=global_step)
+            saver.save(sess, os.path.join("fine_class_pred_model", model_name), global_step=global_step)
 
 def main(_):
     train()
