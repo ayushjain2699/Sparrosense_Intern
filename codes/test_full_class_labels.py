@@ -6,8 +6,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 batch_size = 30
 import sys
 sess = tf.Session()
-saver = tf.train.import_meta_graph('full_class_pred.ckpt-4000.meta')
-saver.restore(sess,tf.train.latest_checkpoint('./'))
+saver = tf.train.import_meta_graph('full_class_pred.ckpt-400.meta')
+saver.restore(sess,'./full_class_pred.ckpt-400')
 
 graph = tf.get_default_graph()
 img_input = graph.get_tensor_by_name("Placeholder:0")
