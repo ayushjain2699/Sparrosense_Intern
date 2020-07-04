@@ -40,6 +40,8 @@ data2[l,]$V3 = "vent cleaning"
 l = data2$V3=="vent cleaning "
 data2[l,]$V3 = "vent cleaning"
 
+data2$V2 = gsub("\n","",data2$V2)
+data2$V1 = gsub("\n","",data2$V1)
 write.csv(data2,"final.csv")
 
 
