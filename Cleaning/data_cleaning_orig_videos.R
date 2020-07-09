@@ -42,6 +42,11 @@ data2[l,]$V3 = "vent cleaning"
 
 data2$V2 = gsub("\n","",data2$V2)
 data2$V1 = gsub("\n","",data2$V1)
+
+##do change air gun1 and 2 to air gun
+
+data2[data2$V1=="",]$V1=data2[data2$V1=="",]$V2
+data2[data2$V2=="",]$V2=data2[data2$V2=="",]$V1
+data2[data2$V4==0,]$V4=1
+
 write.csv(data2,"final.csv")
-
-

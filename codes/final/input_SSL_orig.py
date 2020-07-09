@@ -18,40 +18,32 @@ new_width = 171
 crop_size= 112
 clip_length=16
 
-
-
-
 def read_batch(input):
 
-    rgb_line,u_flow_line,v_flow_line = input
+	video_dir = input[0]
+	#path, dirs, files = next(os.walk(video_dir))
+	count = int(input[1])
+	start_frame = random.randint(1,count-clip_length)
+
+	crop_x = random.randint(0, new_height - crop_size)  # crop size should be applied to all images
+	crop_y = random.randint(0, new_width - crop_size)
+	clip_sample_one = []
+
+	for i in range(clip_length):
+		cur_img_path = os.path.join(video_dir, "frame" + "{:06}.jpg".format(start_frame + i))
+		img_origin = cv2.imread(cur_img_path)
+		#clips_list.append(img_origin)
+		img_res = cv2.resize(img_origin, (171, 128))
+		img = img_res.astype(np.float32)
+		img = img[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size, :]
+		clip_sample_one.append(img)
+
+	clip_sample_one = np.array(clip_sample_one).astype(np.float32)
 
 
+	u_flow_dir = os.path.join(video_dir,"u_flow")
 
-
-    rgb_img_dir = rgb_line[0]
-    start_frame = int(rgb_line[1])
-
-
-    crop_x = random.randint(0, new_height - crop_size)  # crop size should be applied to all images
-    crop_y = random.randint(0, new_width - crop_size)
-    clip_sample_one = []
-    for i in range(clip_length):
-        cur_img_path = os.path.join(rgb_img_dir, "frame" + "{:06}.jpg".format(start_frame + i))
-
-        img_origin = cv2.imread(cur_img_path)
-
-        img_res = cv2.resize(img_origin, (171, 128))
-        img = img_res.astype(np.float32)
-
-        img = img[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size, :]
-
-        clip_sample_one.append(img)
-
-    clip_sample_one = np.array(clip_sample_one).astype(np.float32)  # 16 x 112 x 112 x 3
-
-    u_flow_dir = u_flow_line[0]
-
-    v_flow_dir = v_flow_line[0]
+	v_flow_dir = os.path.join(video_dir,"v_flow")
 
     label_sample_one = []
     # compute sum of motion boundaries on u_flow
@@ -192,47 +184,39 @@ def read_batch(input):
     return clip_sample_one,label_sample_one
 
 
-def read_all(rgb_filename, u_flow_filename, v_flow_filename, batch_size, start_pos=-1,shuffle=True, cpu_num=1):
-    rgb_lines = open(rgb_filename, 'r')
-    rgb_lines = list(rgb_lines)
+def read_all(video_filename, batch_size, start_pos=-1,shuffle=True, cpu_num=12):
+	video_links = open(video_filename, 'r')
+	video_links = list(video_links)
 
-    u_flow_lines = open(u_flow_filename, 'r')
-    u_flow_lines = list(u_flow_lines)
+	batch_index = 0
+	next_batch_start = -1
 
-    v_flow_lines = open(v_flow_filename, 'r')
-    v_flow_lines = list(v_flow_lines)
-
-    batch_index = 0
-    next_batch_start = -1
-
-    train_clips = []
-    label = []
+	train_clips = []
+	label = []
 
 
     if start_pos < 0:
         shuffle=True
 
     if shuffle:
-        video_indices = list(range(len(rgb_lines)))
+        video_indices = list(range(len(video_links)))
         random.shuffle(video_indices)  # shuffle index!
     else:
-        video_indices = range(start_pos, len(rgb_lines))
+        video_indices = range(start_pos, len(video_links))
 
-    lines_batch = []
+    links_batch = []      
     for index in video_indices:
 
         if (batch_index >= batch_size):  # get 30 samples
             next_batch_start = index
             break
         else:
-            rgb_line = rgb_lines[index].strip('\n').split()
+            video_link = video_links[index].strip('\n').split()
             #print(rgb_line)
-            u_flow_line = u_flow_lines[index].strip('\n').split()
-            v_flow_line = v_flow_lines[index].strip('\n').split()
-            lines_batch.append((rgb_line,u_flow_line,v_flow_line))
+            links_batch.append((video_link))
             batch_index = batch_index + 1
 
-    data = (lines_batch)
+    data = (links_batch)
     p = multiprocessing.Pool(processes=cpu_num)
 
     results = p.map(read_batch, data)  # results: 16 x 8

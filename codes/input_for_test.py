@@ -28,7 +28,6 @@ def read_batch(input):
     start_frame = random.randint(1,count-clip_length)
 
 
-
     crop_x = random.randint(0, new_height - crop_size)  # crop size should be applied to all images
     crop_y = random.randint(0, new_width - crop_size)
     clip_sample_one = []

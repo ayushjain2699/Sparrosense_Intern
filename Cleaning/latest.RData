@@ -1,0 +1,280 @@
+cur = 524*60
+no = 60
+avg = 400
+price = 452
+no = 100
+new_avg = (price*no+cur)/(60+no)
+no = 200
+new_avg = (price*no+cur)/(60+no)
+433
+32
+422*32
+433/4
+32*4
+(128*125+(433.5*32))/(32+128)
+avg = 135
+cur = 433.5*32
+price = 125
+av = (cur+no*price)/(no+32)
+200*price
+17.12/8
+17.12*500
+17.12*500*8
+17.12*500*8/2.85
+cur = 17.12*500
+price = 2.85
+no = 2000
+av = (cur+no*price)/(no+500)
+no = 25000
+av = (cur+no*price)/(no+500)
+download.file("https://lilianweng.github.io/lil-log/2019/11/10/self-supervised-learning.html")
+download.file("https://lilianweng.github.io/lil-log/2019/11/10/self-supervised-learning.html",destfile = "./lilianweng.html")
+dir()
+download.file("https://lilianweng.github.io/lil-log/2019/11/10/self-supervised-learning.html",destfile = "./lilianweng.pdf")
+library(ggplot2)
+x = 200:4000:200
+x = 200:4000
+x = seq(200,4000,200)
+x
+y = c(62.5,69,67.5,74.2,74.5,80.5,80.7,81.5,82.2,79.8,81.3,83.7,85.8,83,78.8,81.3,82.5,81.8,83.3,82.7)
+data = data.frame(x = x,y = y)
+data
+g = ggplot(data,aes(x,y))
+g+geom_line()
+g+geom_line()
+library(ggplot2)
+g+geom_line()
+g+geom_line() + ggtitle("Only FC Layers")
+plot(x,y)
+plot(x,y,ltype = 'l')
+plot(x,y,type = l)
+plot(x,y,type = "l")
+plot(x,y,type = "l",main = "Only fc Layers")
+par(mfrow = c(1,3))
+plot(x,y,type = "l",main = "Only fc Layers")
+title(x = "iterations", y = "accuracy")
+x2 = c(200,400,600,800,1000)
+y2 = c(73.2,89.7,92.8,97.3,95.8)
+plot(x2,y2,main = "fine tuning")
+plot(x2,y2,main = "fine tuning")
+plot(x,y,type = "l",main = "Only fc Layers")
+title(x = "iterations", y = "accuracy")
+plot(x2,y2,main = "fine tuning",type = "l")
+title(x = "iterations", y = "accuracy")
+plot(x2,y2,main = "fine tuning",type = "l")+lines(x,y)
+plot(x,y,type = "l",main = "Only fc Layers")
+title(x = "iterations", y = "accuracy")
+plot(x2,y2,main = "fine tuning",type = "l")
+title(x = "iterations", y = "accuracy")
+title(title = "initilized weights from pretext then fine tuning")
+plot(x2,y2,main = "fine tuning",type = "l")
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(0,100))
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(0,100))
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(0,100))
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(55,100))
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(55,100))
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(55,100))
+par(mfrow = c(1,1))
+plot(x,y,type = "l",main = "Only fc Layers",ylim = c(55,100))
+lines(x2,y2)
+lines(x2,y2,col = 'r')
+lines(x2,y2,col = 'red')
+y3 = c(68.8,87.8,95.7,95,98)
+lines(x2,y3,col = 'blue')
+title("accuracy")
+plot(x,y,type = "l",main = "Accuracy",ylim = c(55,100))
+lines(x2,y2,col = 'red')
+lines(x2,y3,col = 'blue')
+legend("topright",col = c("black","red","blue"),legend = c("Only fc layers","Training model with pre_initialized weights for C3D","Training full model from scratch"))
+legend("topright",col = c("black","red","blue"),legend = c("Only fc layers","Training model with pre_initialized weights for C3D","Training full model from scratch"),pch = 2)
+legend("topright",col = c("black","red","blue"),legend = c("Only fc layers","Training model with pre_initialized weights for C3D","Training full model from scratch"),pch = 3)
+legend("topright",col = c("black","red","blue"),legend = c("Only fc layers","Training model with pre_initialized weights for C3D","Training full model from scratch"),pch = 4)
+legend("topright",col = c("black","red","blue"),legend = c("Only fc layers","Training model with pre_initialized weights for C3D","Training full model from scratch"),pch = 25)
+legend("topright",col = c("black","red","blue"),legend = c("Only fc layers","Training model with pre_initialized weights for C3D","Training full model from scratch"),pch = 15)
+x2 = seq(1,5)
+x2 = x2*100
+y2 = c(50,56,58,64,69)
+library(ggplot2)
+d = data.frame(x = x,y = y)
+g = ggplot(d,aes(x = x,y = y))
+g+geom_line()
+g+geom_line(col = 'red')
+g+geom_line(col = 'red')+geom_line(aes(x = x2,y = y2),col = 'blue')
+x = seq(200,2200,200)
+x
+x = seq(200,2200,200)
+y_full = c(50.67,50.26,51.4,57.26,52.2,62.2,61,59,58.8)
+y_full = c(50.67,50.26,51.4,57.26,52.2,62.2,61,59,62.3,59.86,58.8)
+plot(x = x,y = y_full,type = 'l')
+plot(x = x,y = y_full,type = 'l',col = "red")
+plot(x = x,y = y_full,type = 'l',col = "red",ylim = c(50,90))
+plot(x = x,y = y_full,type = 'l',col = "red",ylim = c(50,80))
+plot(x = x,y = y_full,type = 'l',col = "red",ylim = c(50,80))
+y_fine = c(69.5,62.9,69.33,71.0,69.6,72,71.2,71.2,72.1,71)
+y_fine = c(69.5,62.9,69.33,71.0,69.6,69.6,72,71.2,71.2,72.1,71)
+lines(x = x,y = y_fine, col = "blue")
+legend("topright",col = c("red","blue"),legend = c("scratch","SL"),pch = 18)
+title(x = "iterations",y = "Accuracy")
+plot(x = x,y = y_full,type = 'l',col = "red",xlab = "iterations",ylab = "accuray")
+plot(x = x,y = y_full,type = 'l',col = "red",xlab = "iterations",ylab = "accuray",ylim = c(50,80))
+lines(x = x,y = y_fine, col = "blue")
+legend("topright",col = c("red","blue"),legend = c("scratch","SL"),pch = 18)
+title(main = "Test Accuracy")
+setwd("D:/Docs/Sparrosense_Intern/Cleaning")
+data = read.csv("final.csv")
+str(data)
+table(data$V3)
+ag = data[data$V3=="air gun", ]
+cp = data[data$V3=="core placement", ]
+fp = data[data$V3=="filter placement", ]
+sc = data[data$V3=="spray coat", ]
+vc = data[data$V3=="vent cleaning", ]
+l = ag$V5-ag$V4<=14 & ag$V5-ag$V4>=0
+ag = ag[!l,]
+l = cp$V5-cp$V4<=14 & cp$V5-cp$V4>=0
+cp = cp[!l,]
+l = fp$V5-fp$V4<=14 & fp$V5-fp$V4>=0
+fp = fp[!l,]
+l = sc$V5-sc$V4<=14 & sc$V5-sc$V4>=0
+sc = sc[!l,]
+l = vc$V5-vc$V4<=14 & vc$V5-vc$V4>=0
+vc = vc[!l,]
+rbinom(10,10,0.5)
+rbinom(10,1,0.5)
+rbinom(10,0,0.5)
+rbinom(10,2,0.5)
+rbinom(10,10,0.5)
+l
+table(ag$V4==NA)
+table(is.na(ag$V3))
+table(is.na(ag$V4))
+table(is.na(vc$V4))
+table(is.na(vc$V3))
+vc$V4==NA
+is.na(vc$V4)
+vc[is.na(vc$V4),]
+table(is.na(ag$V1))
+str(ag)
+ag = data[data$V3=="air gun", ]
+table(is.na(ag$V4))
+table(is.na(ag$V3))
+cp = data[data$V3=="core placement", ]
+fp = data[data$V3=="filter placement", ]
+sc = data[data$V3=="spray coat", ]
+vc = data[data$V3=="vent cleaning", ]
+table(data$V1=="")
+summary(data)
+data[data$V1=="",]$V1=data[data$V1=="",]$V2
+data[data$V2=="",]$V2=data[data$V2=="",]$V1
+ag = data[data$V3=="air gun", ]
+cp = data[data$V3=="core placement", ]
+fp = data[data$V3=="filter placement", ]
+sc = data[data$V3=="spray coat", ]
+vc = data[data$V3=="vent cleaning", ]
+data[is.na(data$V4),]$V4=0
+table(is.na(data$V4))
+head(data$V4)
+head(data$V4,10)
+head(data$V4,20)
+head(data$V4,50)
+data[data$V4==0,]$V4=1
+head(data$V4,50)
+write.csv(data,"final.csv")
+table(is.na(data$V4))
+ag = data[data$V3=="air gun", ]
+cp = data[data$V3=="core placement", ]
+fp = data[data$V3=="filter placement", ]
+sc = data[data$V3=="spray coat", ]
+vc = data[data$V3=="vent cleaning", ]
+table(is.na(ag$V5))
+table(is.na(sc$V5))
+set.seed(42)
+rows = sample(nrow(ag))
+ag_shuffle = ag[rows, ]
+rows = sample(nrow(cp))
+cp_shuffle = cp[rows, ]
+rows = sample(nrow(fp))
+fp_shuffle = fp[rows, ]
+rows = sample(nrow(vc))
+vc_shuffle = vc[rows, ]
+seed = 42
+save.image("D:/Docs/Sparrosense_Intern/Cleaning/shuffled_dfs.RData")
+new_data = rbind(ag_shuffle[1:214, ],cp_shuffle[1:214, ],fp_shuffle[1:214, ],sc,vc_shuffle[1:214, ])
+214*5\
+214*5
+str(new_data)
+new_data$V4 = as.character(new_data$V4)
+new_data$V5 = as.character(new_data$V5)
+str(new_data)
+table(is.na(new_data$V5))
+new_data[is.na(new_data$V5),] = "na"
+table(is.na(new_data$V4))
+new_data$V3 = as.factor(new_data$V3)
+str(new_data)
+new_data$final = paste(new_data$V1,new_data$V2,new_data$V3,new_data$V4,new_data$V5,new_data$V6, sep = " ")
+write(new_data$final,"list.list")
+save.image("D:/Docs/Sparrosense_Intern/Cleaning/latest.RData")
+table(is.na(new_data$V1))
+table(is.na(new_data$V2))
+table(is.na(new_data$V3))
+table(is.na(new_data$V4))
+table(is.na(new_data$V5))
+table(is.na(new_data$V6))
+table(new_data$V1=="na")
+table(data$V1=="na")
+table(is.na(data$V1))
+table(data$V1=="")
+table(data$V2=="")
+table(ag$V1=="na")
+table(vc$V1=="na")
+table(vc_shuffle$V1=="na")
+table(ag_shuffle$V1=="na")
+table(new_data$V1=="na")
+new_data = rbind(ag_shuffle[1:214, ],cp_shuffle[1:214, ],fp_shuffle[1:214, ],sc,vc_shuffle[1:214, ])
+table(new_data$V1=="na")
+str(new_data)
+summary(new_data)
+table(new_data$V1=="na")
+new_data$V4 = as.character(new_data$V4)
+new_data$V5 = as.character(new_data$V5)
+summary(new_data)
+table(new_data$V1=="na")
+table(new_data$V5=="na")
+table(new_data$V5=="NA")
+table(new_data$V5==NA)
+head(new_data$V5)
+head(new_data$V5,25)
+head(new_data$V5,50)
+head(new_data$V5,100)
+(new_data$V5)
+new_data[is.na(new_data$V5), ] = "-"
+(new_data$V5)
+summary(new_data)
+table(new_data$V1=="na")
+str(new_data)
+new_data$V3 = as.factor(new_data$V3)
+new_data$V3 = as.integer(new_data$V3)
+new_data$V3 = as.character(new_data$V3)
+str(new_data)
+table(new_data$V3)
+new_data = rbind(ag_shuffle[1:214, ],cp_shuffle[1:214, ],fp_shuffle[1:214, ],sc,vc_shuffle[1:214, ])
+table(new_data$V3)
+str(new_data)
+new_data$V4 = as.character(new_data$V4)
+new_data$V5 = as.character(new_data$V5)
+new_data[is.na(new_data$V5), ] = "-"
+str(new_data)
+new_data$V3 = as.factor(new_data$V3)
+str(new_data)
+new_data = rbind(ag_shuffle[1:214, ],cp_shuffle[1:214, ],fp_shuffle[1:214, ],sc,vc_shuffle[1:214, ])
+new_data$V4 = as.character(new_data$V4)
+new_data$V5 = as.character(new_data$V5)
+new_data[is.na(new_data$V5),5] = "-"
+new_data$V3 = as.factor(new_data$V3)
+str(new_data)
+new_data$V3 = as.integer(new_data$V3)
+new_data$V3 = as.character(new_data$V3)
+str(new_data)
+new_data$final = paste(new_data$V1,new_data$V2,new_data$V3,new_data$V4,new_data$V5,new_data$V6, sep = " ")
+write(new_data$final,"list.list")
+savehistory("D:/Docs/Sparrosense_Intern/Cleaning/latest.RData")
