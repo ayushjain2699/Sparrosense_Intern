@@ -24,9 +24,14 @@ def read_batch(input):
 
     video_start_dir = video_link[0]
     video_end_dir = video_link[1]
-    start_frame = video_link[3] 
-    end_frame = video_link[4]
-    start_end = video_link[5]
+    start_frame = int(video_link[3]) 
+    end_frame = int(video_link[4])
+    path, dirs, files = next(os.walk(video_start_dir))
+    ##########################################
+    start_end = len(files)  #CONFIRM THIS NUMBER
+    ##########################################
+    if(end_frame == "-"):
+        end_frame = start_end
 
     crop_x = random.randint(0, new_height - crop_size)  # crop size should be applied to all images
     crop_y = random.randint(0, new_width - crop_size)
@@ -101,9 +106,8 @@ def read_batch(input):
                 img = img[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size, :]
                 clip_sample_one.append(img)
                 j += 1
-  # 16 x 112 x 112 x 3
 
-    class_label = int(rgb_line[2])
+    class_label = int(video_link[2])
 
     one_hot_class_label = np.identity(num_classes)[class_label]
 
@@ -114,9 +118,9 @@ def read_batch(input):
     return clip_sample_one,label_sample_one
 
 
-def read_all(rgb_filename, batch_size, num_classes, start_pos=-1,shuffle=True, cpu_num=12):
-    rgb_lines = open(rgb_filename, 'r')
-    rgb_lines = list(rgb_lines)
+def read_all(video_filename, batch_size, num_classes, start_pos=-1,shuffle=True, cpu_num=12):
+    video_links = open(video_filename, 'r')
+    video_links = list(video_links)
 
     batch_index = 0
     next_batch_start = -1
@@ -129,24 +133,24 @@ def read_all(rgb_filename, batch_size, num_classes, start_pos=-1,shuffle=True, c
         shuffle=True
 
     if shuffle:
-        video_indices = list(range(len(rgb_lines)))
+        video_indices = list(range(len(video_links)))
         random.shuffle(video_indices)  # shuffle index!
     else:
-        video_indices = range(start_pos, len(rgb_lines))
+        video_indices = range(start_pos, len(video_links))
 
-    lines_batch = []      
+    links_batch = []      
     for index in video_indices:
 
         if (batch_index >= batch_size):  # get 30 samples
             next_batch_start = index
             break
         else:
-            rgb_line = rgb_lines[index].strip('\n').split()
+            video_link = video_links[index].strip('\n').split()
             #print(rgb_line)
-            lines_batch.append((rgb_line,num_classes))
+            links_batch.append((video_link,num_classes))
             batch_index = batch_index + 1
 
-    data = (lines_batch)
+    data = (links_batch)
     p = multiprocessing.Pool(processes=cpu_num)
 
     results = p.map(read_batch, data)  # results: 16 x 8
