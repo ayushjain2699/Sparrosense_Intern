@@ -6,6 +6,7 @@ import os
 import random
 import numpy as np
 import cv2
+import fastrand
 
 
 from scipy import ndimage
@@ -25,13 +26,15 @@ def read_batch(input):
     video_start_dir = video_link[0]
     video_end_dir = video_link[1]
     start_frame = int(video_link[3]) 
-    end_frame = int(video_link[4])
+    end_frame = (video_link[4])
     path, dirs, files = next(os.walk(video_start_dir))
     ##########################################
     start_end = len(files)  #CONFIRM THIS NUMBER
     ##########################################
     if(end_frame == "-"):
         end_frame = start_end
+    else
+        end_frmae = int(end_frame)
 
     crop_x = random.randint(0, new_height - crop_size)  # crop size should be applied to all images
     crop_y = random.randint(0, new_width - crop_size)
@@ -40,7 +43,9 @@ def read_batch(input):
     if(video_start_dir == video_end_dir):
 
         if(end_frame - start_frame>=clip_length - 1):
-            start_frame = random.randint(start_frame,end_frame - clip_length + 1)
+            #start_frame = random.randint(start_frame,end_frame - clip_length + 1)
+            start_frame = fastrand.pcg32bounded(end_frame-clip_length+1-start_frame+1)+start_frame
+
 
             for i in range(clip_length):
                 cur_img_path = os.path.join(video_start_dir, "frame" + "{:06}.jpg".format(start_frame + i))
@@ -73,7 +78,9 @@ def read_batch(input):
         total = start_end - start_frame + 1 + end_frame
 
         if(total>=clip_length):
-            start_frame = random.randint(start_frame,start_end + end_frame - clip_length + 1)
+            #start_frame = random.randint(start_frame,start_end + end_frame - clip_length + 1)
+            start_frame = fastrand.pcg32bounded(start_end+end_frame-clip_length+1-start_frame+1)+start_frame
+
 
             for i in range(clip_length):
 
@@ -107,7 +114,7 @@ def read_batch(input):
                 clip_sample_one.append(img)
                 j += 1
 
-    class_label = int(video_link[2])
+    class_label = int(video_link[2])-1
 
     one_hot_class_label = np.identity(num_classes)[class_label]
 
@@ -119,8 +126,7 @@ def read_batch(input):
 
 
 def read_all(video_filename, batch_size, num_classes, start_pos=-1,shuffle=True, cpu_num=12):
-    video_links = open(video_filename, 'r')
-    video_links = list(video_links)
+
 
     batch_index = 0
     next_batch_start = -1

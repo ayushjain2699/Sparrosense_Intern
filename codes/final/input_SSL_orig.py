@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import fastrand
 import os
 import random
 import numpy as np
@@ -23,7 +24,8 @@ def read_batch(input):
 	video_dir = input[0]
 	#path, dirs, files = next(os.walk(video_dir))
 	count = int(input[1])
-	start_frame = random.randint(1,count-clip_length)
+	#start_frame = int(random.random()*(count-clip_length)+1)
+	start_frame = fastrand.pcg32bounded(count-clip_length)+1
 
 	crop_x = random.randint(0, new_height - crop_size)  # crop size should be applied to all images
 	crop_y = random.randint(0, new_width - crop_size)
@@ -45,143 +47,143 @@ def read_batch(input):
 
 	v_flow_dir = os.path.join(video_dir,"v_flow")
 
-    label_sample_one = []
-    # compute sum of motion boundaries on u_flow
-    du_x = 0
-    du_y = 0
+	label_sample_one = []
+	# compute sum of motion boundaries on u_flow
+	du_x = 0
+	du_y = 0
 
-    du_x_all = []
-    du_y_all = []
+	du_x_all = []
+	du_y_all = []
 
-    for i in range(clip_length - 1):
-        cur_img_path = os.path.join(u_flow_dir, 'frame' + '{:06}.jpg'.format(start_frame + i))
-        img = cv2.imread(cur_img_path)
-        img = img[..., 0]
-        img = cv2.resize(img, (171, 128))
+	for i in range(clip_length - 1):
+		cur_img_path = os.path.join(u_flow_dir, 'frame' + '{:06}.jpg'.format(start_frame + i))
+		img = cv2.imread(cur_img_path)
+		img = img[..., 0]
+		img = cv2.resize(img, (171, 128))
 
-        u_flow = img.astype(np.float32)
-        u_flow = ((u_flow * 40.) / 255.) - 20
-
-
-        u_flow = u_flow[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size]
+		u_flow = img.astype(np.float32)
+		u_flow = ((u_flow * 40.) / 255.) - 20
 
 
-        mx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
-        my = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
-
-        d_x = ndimage.convolve(u_flow, mx)
-        d_y = ndimage.convolve(u_flow, my)
-
-        du_x_all.append(d_x)
-        du_y_all.append(d_y)
-
-        du_x += d_x
-        du_y += d_y
-
-    # compute sum of motion boundaries on v_flow
-    dv_x = 0
-    dv_y = 0
-
-    dv_x_all = []
-    dv_y_all = []
-
-    for i in range(clip_length - 1):
-        cur_img_path = os.path.join(v_flow_dir, 'frame' + '{:06}.jpg'.format(start_frame + i))
-        img = cv2.imread(cur_img_path)
-        img = img[..., 0]
-        img = cv2.resize(img, (171, 128))
-
-        v_flow = img.astype(np.float32)
-        v_flow = ((v_flow * 40.) / 255.) - 20
+		u_flow = u_flow[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size]
 
 
-        v_flow = v_flow[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size]
+		mx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+		my = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
+
+		d_x = ndimage.convolve(u_flow, mx)
+		d_y = ndimage.convolve(u_flow, my)
+
+		du_x_all.append(d_x)
+		du_y_all.append(d_y)
+
+		du_x += d_x
+		du_y += d_y
+
+	# compute sum of motion boundaries on v_flow
+	dv_x = 0
+	dv_y = 0
+
+	dv_x_all = []
+	dv_y_all = []
+
+	for i in range(clip_length - 1):
+		cur_img_path = os.path.join(v_flow_dir, 'frame' + '{:06}.jpg'.format(start_frame + i))
+		img = cv2.imread(cur_img_path)
+		img = img[..., 0]
+		img = cv2.resize(img, (171, 128))
+
+		v_flow = img.astype(np.float32)
+		v_flow = ((v_flow * 40.) / 255.) - 20
 
 
-
-        mx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
-        my = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
-
-        d_x = ndimage.convolve(v_flow, mx)
-        d_y = ndimage.convolve(v_flow, my)
-
-        dv_x_all.append(d_x)
-        dv_y_all.append(d_y)
-
-        dv_x += d_x
-        dv_y += d_y
-
-    mag_u, ang_u = cv2.cartToPolar(du_x, du_y, angleInDegrees=True)
-    mag_v, ang_v = cv2.cartToPolar(dv_x, dv_y, angleInDegrees=True)
-
-
-    u_max_mag_1, u_max_ang_1 = pattern_1(mag_u, ang_u)
-    v_max_mag_1, v_max_ang_1 = pattern_1(mag_v, ang_v)
-
-    u_max_mag_2, u_max_ang_2 = pattern_2(mag_u, ang_u)
-    v_max_mag_2, v_max_ang_2 = pattern_2(mag_v, ang_v)
-
-    u_max_mag_3, u_max_ang_3 = pattern_3(mag_u, ang_u)
-    v_max_mag_3, v_max_ang_3 = pattern_3(mag_v, ang_v)
+		v_flow = v_flow[crop_x:crop_x + crop_size, crop_y:crop_y + crop_size]
 
 
 
+		mx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+		my = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]])
 
-    ### compute max du_all
+		d_x = ndimage.convolve(v_flow, mx)
+		d_y = ndimage.convolve(v_flow, my)
 
-    du_sum_mag =[]
-    for i in range(15):
-        cur_du_x = du_x_all[i]
-        cur_du_y = du_y_all[i]
-        mag_u, ang_u = cv2.cartToPolar(cur_du_x, cur_du_y, angleInDegrees=True)
-        tmp_sum_mag = np.sum(mag_u)
-        du_sum_mag.append(tmp_sum_mag)
+		dv_x_all.append(d_x)
+		dv_y_all.append(d_y)
 
-    du_sum_mag = np.array(du_sum_mag)
-    max_du_idx = np.argmax(du_sum_mag) + 1  # start from 1
+		dv_x += d_x
+		dv_y += d_y
+
+	mag_u, ang_u = cv2.cartToPolar(du_x, du_y, angleInDegrees=True)
+	mag_v, ang_v = cv2.cartToPolar(dv_x, dv_y, angleInDegrees=True)
 
 
-    ### compute max dv_all
+	u_max_mag_1, u_max_ang_1 = pattern_1(mag_u, ang_u)
+	v_max_mag_1, v_max_ang_1 = pattern_1(mag_v, ang_v)
 
-    dv_sum_mag = []
+	u_max_mag_2, u_max_ang_2 = pattern_2(mag_u, ang_u)
+	v_max_mag_2, v_max_ang_2 = pattern_2(mag_v, ang_v)
 
-    for i in range(15):
-        cur_dv_x = dv_x_all[i]
-        cur_dv_y = dv_y_all[i]
-
-        mag_v, ang_v = cv2.cartToPolar(cur_dv_x, cur_dv_y, angleInDegrees=True)
-        tmp_sum_mag = np.sum(mag_v)
-        dv_sum_mag.append(tmp_sum_mag)
-
-    dv_sum_mag = np.array(dv_sum_mag)
-    max_dv_idx = np.argmax(dv_sum_mag) + 1  # start from 1
+	u_max_mag_3, u_max_ang_3 = pattern_3(mag_u, ang_u)
+	v_max_mag_3, v_max_ang_3 = pattern_3(mag_v, ang_v)
 
 
 
 
-    label_sample_one.append(u_max_mag_1)
-    label_sample_one.append(u_max_ang_1)
-    label_sample_one.append(v_max_mag_1)
-    label_sample_one.append(v_max_ang_1)
+	### compute max du_all
 
-    label_sample_one.append(u_max_mag_2)
-    label_sample_one.append(u_max_ang_2)
-    label_sample_one.append(v_max_mag_2)
-    label_sample_one.append(v_max_ang_2)
+	du_sum_mag =[]
+	for i in range(15):
+		cur_du_x = du_x_all[i]
+		cur_du_y = du_y_all[i]
+		mag_u, ang_u = cv2.cartToPolar(cur_du_x, cur_du_y, angleInDegrees=True)
+		tmp_sum_mag = np.sum(mag_u)
+		du_sum_mag.append(tmp_sum_mag)
 
-    label_sample_one.append(u_max_mag_3)
-    label_sample_one.append(u_max_ang_3)
-    label_sample_one.append(v_max_mag_3)
-    label_sample_one.append(v_max_ang_3)
-
-    label_sample_one.append(max_du_idx)
-    label_sample_one.append(max_dv_idx)
-
-    label_sample_one = np.array(label_sample_one)
+	du_sum_mag = np.array(du_sum_mag)
+	max_du_idx = np.argmax(du_sum_mag) + 1  # start from 1
 
 
+	### compute max dv_all
 
-    return clip_sample_one,label_sample_one
+	dv_sum_mag = []
+
+	for i in range(15):
+		cur_dv_x = dv_x_all[i]
+		cur_dv_y = dv_y_all[i]
+
+		mag_v, ang_v = cv2.cartToPolar(cur_dv_x, cur_dv_y, angleInDegrees=True)
+		tmp_sum_mag = np.sum(mag_v)
+		dv_sum_mag.append(tmp_sum_mag)
+
+	dv_sum_mag = np.array(dv_sum_mag)
+	max_dv_idx = np.argmax(dv_sum_mag) + 1  # start from 1
+
+
+
+
+	label_sample_one.append(u_max_mag_1)
+	label_sample_one.append(u_max_ang_1)
+	label_sample_one.append(v_max_mag_1)
+	label_sample_one.append(v_max_ang_1)
+
+	label_sample_one.append(u_max_mag_2)
+	label_sample_one.append(u_max_ang_2)
+	label_sample_one.append(v_max_mag_2)
+	label_sample_one.append(v_max_ang_2)
+
+	label_sample_one.append(u_max_mag_3)
+	label_sample_one.append(u_max_ang_3)
+	label_sample_one.append(v_max_mag_3)
+	label_sample_one.append(v_max_ang_3)
+
+	label_sample_one.append(max_du_idx)
+	label_sample_one.append(max_dv_idx)
+
+	label_sample_one = np.array(label_sample_one)
+
+
+
+	return clip_sample_one,label_sample_one
 
 
 def read_all(video_filename, batch_size, start_pos=-1,shuffle=True, cpu_num=12):

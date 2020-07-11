@@ -14,7 +14,9 @@ flags.DEFINE_float('base_lr',0.001, 'base learning rate')
 flags.DEFINE_string('model_save_path', 'motion_pattern_all_new_global', 'path to save model')
 flags.DEFINE_integer('display', 1, 'print out the loss every dispaly iterations')
 flags.DEFINE_integer('dimension',14, 'print out the loss every dispaly iterations')
-flags.DEFINE_integer('max_iter',4000, 'max iteration')
+########################################################
+flags.DEFINE_integer('max_iter',6000, 'max iteration')
+########################################################
 flags.DEFINE_integer('cpu_num', 14, 'num of cpu process to read data, default:6')
 
 
@@ -41,9 +43,9 @@ def train():
         elif 'bias' in var.name:
             varlist_bias.append(var)
 
-    lr_weight = tf.train.exponential_decay(FLAGS.base_lr, global_step, 1000, 0.1,
+    lr_weight = tf.train.exponential_decay(FLAGS.base_lr, global_step, 1500, 0.1,
                                            staircase=True)  
-    lr_bias = tf.train.exponential_decay(FLAGS.base_lr * 2, global_step, 1000, 0.1,
+    lr_bias = tf.train.exponential_decay(FLAGS.base_lr * 2, global_step, 1500, 0.1,
                                          staircase=True)
 
     opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum)
@@ -65,7 +67,9 @@ def train():
     apply_gradient_op_bias = opt_bias.apply_gradients(grad_bias, global_step=global_step)
     train_op = tf.group(apply_gradient_op_weight, apply_gradient_op_bias)
 
-    saver = tf.train.Saver()
+    ##############################
+    saver = tf.train.Saver(max_to_keep = 15)    #enter the limit
+    ##############################
     merged = tf.summary.merge_all()
 
     video_list = 'list/list_for_SSL.list'
@@ -82,7 +86,7 @@ def train():
             train_images, train_labels, next_batch_start = input_SSL_orig.read_all(
                 video_filename=video_list,
                 batch_size=FLAGS.batch_size,
-                start_pos=-1,
+                start_pos=-1,   
                 shuffle=True,
                 cpu_num=FLAGS.cpu_num
             )
@@ -105,7 +109,7 @@ def train():
             print('Step %d: %.3f sec' % (i, duration))
 
 
-            if i % 1000 == 0:
+            if i % 500 == 0:
                 saver.save(sess, os.path.join(FLAGS.model_save_path, model_name), global_step=global_step)
 
 

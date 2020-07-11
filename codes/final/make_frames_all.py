@@ -36,7 +36,7 @@ df = pd.DataFrame(columns=['video','count'])
 print("Extracting RGB frames....")
 
 for i in range(1,3):
-    #print("Extracting video number : %d"%i)
+    print("Extracting video number : %d"%i)
     #start_time = time.time()
     pathIn = l[i].strip('\n')
 

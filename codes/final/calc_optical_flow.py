@@ -5,12 +5,12 @@ import os
 def calc_flow(video_link):
 
 	path, dirs, files = next(os.walk(video_link))
-    count = len(files)
+	count = len(files)
 
     os.mkdir(video_link+"/"+"u_flow")
 	os.mkdir(video_link+"/"+"v_flow")
 	
-    cur_img_path = os.path.join(video_link, "frame" + "{:06}.jpg".format(1))
+	cur_img_path = os.path.join(video_link, "frame" + "{:06}.jpg".format(1))
 	img_origin = cv2.imread(cur_img_path)
 	img_res = cv2.resize(img_origin, (171, 128))
 	frame1 = img_res
@@ -34,8 +34,8 @@ def calc_flow(video_link):
 		vert = vert.astype('uint8')
 		
 		print("extracting frame = %d"%(i-1))
-		cv2.imwrite(os.path.join(video_link,u_flow,"frame{:06}.jpg".format(i-1)), horz)
-		cv2.imwrite(os.path.join(video_link,v_flow,"frame{:06}.jpg".format(i-1)), vert)
+		cv2.imwrite(os.path.join(video_link,"u_flow","frame{:06}.jpg".format(i-1)), horz)
+		cv2.imwrite(os.path.join(video_link,"v_flow","frame{:06}.jpg".format(i-1)), vert)
 		frame1 = frame2
 
 
@@ -47,5 +47,5 @@ video_links = list(video_links)
 
 for i in range(len(video_links)):
 	print("calculating flow of video : %d"%(i+1))
-	video_link = video_links[i]
+	video_link = video_links[i].strip('\n')
 	calc_flow(video_link)

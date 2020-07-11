@@ -20,16 +20,16 @@ model_name = "SL.ckpt"
 def train():
 
 	sess = tf.Session()
-	saver = tf.train.import_meta_graph('motion_pattern_all_new_global/model_motion_statistics.ckpt-4000.meta')
+	saver = tf.train.import_meta_graph('motion_pattern_all_new_global/model_motion_statistics.ckpt-6000.meta')
 	saver.restore(sess,tf.train.latest_checkpoint('motion_pattern_all_new_global/'))
 
 	graph = tf.get_default_graph()
-	img_input = graph.get_tensor_by_name("Placeholder:0")
+	img_input = graph.get_tensor_by_name("img_input:0")
 	reshaped = graph.get_tensor_by_name("C3D/reshaped:0")
-	temp = graph.get_tensor_by_name("Placeholder_1:0")
+	temp = graph.get_tensor_by_name("y_target:0")
 	temp_value = np.zeros([batch_size,14])
 	#reshaped = tf.stop_gradient(reshaped)
-	y_target = tf.placeholder(tf.float32, shape=(None,num_classes),name = "y_target")
+	y_target = tf.placeholder(tf.float32, shape=(None,num_classes),name = "y_target_SL")
 	# sys.path.append('../')
 
 	y_pred = model_class_det.fc(reshaped, num_classes, regularizer = True, dropout = False)
@@ -88,20 +88,20 @@ def train():
 	train_writer = tf.summary.FileWriter('./visual_logs/train_SL', sess.graph)
 	total_accuracy = 0
 
-    for i in range(1,iterations+1):
-        start_time = time.time()
+	for i in range(1,iterations+1):
+		start_time = time.time()
 
 		train_images, train_labels, next_batch_start = input_SL_orig.read_all(
 		    video_filename=video_list,
-		    batch_size=batch_size,
-		    num_classes = num_classes,
+		    batch_size=30,
+		    num_classes = 5,
 		    start_pos=-1,
 		    shuffle=True,
-		    cpu_num=cpu_num      
+		    cpu_num=12      
 		)
 
-        duration = time.time() - start_time
-        print('read data time %.3f sec' % (duration))
+		duration = time.time() - start_time
+		print('read data time %.3f sec' % (duration))
 
 		feature, summary, loss_value, ce_loss, _, old_weight, accuracy= sess.run([
 		    reshaped, merged, loss, softmax_loss, train_op, grad_weight, accuracy_tensor], feed_dict={
@@ -110,27 +110,27 @@ def train():
 		    temp: temp_value
 		})
 		total_accuracy = total_accuracy+accuracy
-        if i % (display) == 0:
-            print("softmax_loss:", ce_loss)
-            print("loss:", loss_value)
-            train_writer.add_summary(summary, i)
-        duration = time.time() - start_time
-        print('Step %d: %.3f sec' % (i, duration))
+		if i % (display) == 0:
+		    print("softmax_loss:", ce_loss)
+		    print("loss:", loss_value)
+		    train_writer.add_summary(summary, i)
+		duration = time.time() - start_time
+		print('Step %d: %.3f sec' % (i, duration))
 
 
-        if i % 200 == 0:
-        	print("Avg accuracy from step %d to %d: %.3f" % (i-200,i,total_accuracy/200))
-        	total_accuracy = 0
+		if i % 200 == 0:
+			print("Avg accuracy from step %d to %d: %.3f" % (i-200,i,total_accuracy/200))
+			total_accuracy = 0
 
-        	final_accuracy = 0
-        	for j in range(iterations_for_accuracy):
+			final_accuracy = 0
+			for j in range(iterations_for_accuracy):
 		        test_images,test_labels,_ = input_SL_orig.read_all(video_filename = video_list,batch_size = batch_size,num_classes = num_classes,start_pos = -1,shuffle = True,cpu_num = cpu_num)
 		        label_pred,label,accuracy = sess.run([y_pred,out_final,accuracy_tensor],feed_dict = {img_input:test_images,y_target:test_labels,temp:temp_value})
 		        final_accuracy = final_accuracy+accuracy
 
-        	print("Accuracy at step %d: %.3f" % (i,final_accuracy/iterations_for_accuracy))
+			print("Accuracy at step %d: %.3f" % (i,final_accuracy/iterations_for_accuracy))
 
-            saver.save(sess, os.path.join("SL_Model", model_name), global_step=global_step)
+		    saver.save(sess, os.path.join("SL_Model", model_name), global_step=global_step)
 
 def main(_):
     train()
