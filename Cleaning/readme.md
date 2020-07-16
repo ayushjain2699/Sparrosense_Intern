@@ -33,3 +33,6 @@ Contains the list of test examples(2302 examples).
 Contains the list of test examples(693 examples)  
 *Format* - \<directory structure of start video>\<space>\<directory structure of start video>\<class_number>  
 \<space>\<start_frame>\<space>\<end_frame>.  
+
+###.Rdata
+Contains all the cleaned data loaded in R.  
