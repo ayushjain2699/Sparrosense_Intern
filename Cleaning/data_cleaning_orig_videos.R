@@ -44,6 +44,7 @@ data2$V2 = gsub("\n","",data2$V2)
 data2$V1 = gsub("\n","",data2$V1)
 
 ##do change air gun1 and 2 to air gun
+## remove .mp5
 
 data2[data2$V1=="",]$V1=data2[data2$V1=="",]$V2
 data2[data2$V2=="",]$V2=data2[data2$V2=="",]$V1

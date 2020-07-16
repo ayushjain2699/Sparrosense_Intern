@@ -127,7 +127,10 @@ def read_batch(input):
 
 def read_all(video_filename, batch_size, num_classes, start_pos=-1,shuffle=True, cpu_num=12):
 
+    video_links = open(video_filename, 'r')
+    video_links = list(video_links)
 
+    
     batch_index = 0
     next_batch_start = -1
 
@@ -144,7 +147,7 @@ def read_all(video_filename, batch_size, num_classes, start_pos=-1,shuffle=True,
     else:
         video_indices = range(start_pos, len(video_links))
 
-    links_batch = []      
+    links_batch = []
     for index in video_indices:
 
         if (batch_index >= batch_size):  # get 30 samples

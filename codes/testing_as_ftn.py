@@ -7,14 +7,14 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 batch_size = 30
 import sys
 sess = tf.Session()
-saver = tf.train.import_meta_graph('./SL_Model/SL.ckpt-3000.meta')
+saver = tf.train.import_meta_graph('./SL_Model/SL.ckpt-200.meta')
 #saver.restore(sess,tf.train.latest_checkpoint('./SL_Model/'))
 
 graph = tf.get_default_graph()
 img_input = graph.get_tensor_by_name("img_input:0")
 temp = graph.get_tensor_by_name("y_target:0")
 temp_value = np.zeros([batch_size,14])
-out_label = graph.get_tensor_by_name("fc2/out:0")
+out_label = graph.get_tensor_by_name("fc3/out:0")
 out_final = tf.nn.softmax(out_label)
 y_target = graph.get_tensor_by_name("y_target_SL:0")
 

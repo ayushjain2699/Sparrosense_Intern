@@ -30,7 +30,7 @@ def extractFrames(pathIn):
         cv2.destroyAllWindows()
  
 
-list_of_videos = "unique_videos_test.list"
+list_of_videos = "unique_videos.list"
 l = open(list_of_videos,'r')
 l = list(l)
 

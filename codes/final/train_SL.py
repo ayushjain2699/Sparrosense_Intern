@@ -66,7 +66,7 @@ def train():
 	apply_gradient_op_bias = opt_bias.apply_gradients(grad_bias, global_step=global_step)
 	train_op = tf.group(apply_gradient_op_weight, apply_gradient_op_bias)
 
-	saver = tf.train.Saver()
+	saver = tf.train.Saver(max_to_keep = 15)
 	merged = tf.summary.merge_all()
 
 	out_final = tf.nn.softmax(y_pred)
