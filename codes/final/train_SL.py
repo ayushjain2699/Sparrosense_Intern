@@ -45,11 +45,13 @@ def train():
 	    elif 'bias' in var.name:
 	        varlist_bias.append(var)
 
-	lr_weight = tf.train.exponential_decay(base_lr, global_step, 1000, 0.1,staircase=True)  
-	lr_bias = tf.train.exponential_decay(base_lr * 2, global_step, 1000, 0.1,staircase=True)
+	#lr_weight = tf.train.exponential_decay(base_lr, global_step, 1000, 0.1,staircase=True)  
+	#lr_bias = tf.train.exponential_decay(base_lr * 2, global_step, 1000, 0.1,staircase=True)
 
-	opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum,name = "momentum2")
-	opt_bias = tf.train.MomentumOptimizer(lr_bias, momentum=momentum,name = "momentum2")
+	#opt_weight = tf.train.MomentumOptimizer(lr_weight, momentum=momentum,name = "momentum2")
+	#opt_bias = tf.train.MomentumOptimizer(lr_bias, momentum=momentum,name = "momentum2")
+	opt_weight = tf.train.AdamOptimizer(learning_rate = base_lr)
+	opt_bias = tf.train.AdamOptimizer(learning_rate = base_lr)
 
 	softmax_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits = y_pred,labels = y_target))
 
